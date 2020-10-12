@@ -60,7 +60,6 @@ public class MvcGameJavaFxLauncher extends Application {
         // The game-loop
         new AnimationTimer() {
             public void handle(long currentNanoTime) {
-                gc.clearRect(0, 0, winWidth, winHeight);
                 theMvcGame.processPressedKeys(pressedKeysCodes);
                 theMvcGame.update();
                 theMvcGame.render(gc);
