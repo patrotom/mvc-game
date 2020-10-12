@@ -1,4 +1,6 @@
-package cz.cvut.fit.miadp.mvcgame;
+package cz.cvut.fit.miadp.mvcgame.controller;
+
+import cz.cvut.fit.miadp.mvcgame.model.GameModel;
 
 import java.util.List;
 
@@ -10,19 +12,13 @@ public class GameController {
     }
 
     public void processPressedKeys(List<String> pressedKeysCodes) {
-        for(String code : pressedKeysCodes) {
+        for (String code : pressedKeysCodes) {
             switch(code) {
                 case "UP":
-                    this.model.moveLogoUp();
+                    this.model.moveCannonUp();
                     break;
                 case "DOWN":
-                    this.model.moveLogoDown();
-                    break;
-                case "LEFT":
-                    this.model.moveLogoLeft();
-                    break;
-                case "RIGHT":
-                    this.model.moveLogoRight();
+                    this.model.moveCannonDown();
                     break;
                 default:
                     //nothing

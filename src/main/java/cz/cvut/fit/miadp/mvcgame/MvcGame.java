@@ -2,6 +2,9 @@ package cz.cvut.fit.miadp.mvcgame;
 
 import java.util.List;
 import cz.cvut.fit.miadp.mvcgame.config.MvcGameConfig;
+import cz.cvut.fit.miadp.mvcgame.controller.GameController;
+import cz.cvut.fit.miadp.mvcgame.model.GameModel;
+import cz.cvut.fit.miadp.mvcgame.view.GameView;
 import javafx.scene.canvas.GraphicsContext;
 
 public class MvcGame {
@@ -20,7 +23,7 @@ public class MvcGame {
     }
 
     public void update() {
-        // nothing yet
+        model.update();
     }
 
     public void render(GraphicsContext gr) {
