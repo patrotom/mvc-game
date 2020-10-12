@@ -22,7 +22,7 @@ public class GameView {
     public GameController getController() { return this.controller; }
 
     private void drawCannon(GraphicsContext gr) {
-        Position pos = model.getCannonPosition();
+        Position pos = model.getCannon().getPosition();
         gr.drawImage(new Image("images/cannon.png"), pos.getX(), pos.getY());
     }
 }

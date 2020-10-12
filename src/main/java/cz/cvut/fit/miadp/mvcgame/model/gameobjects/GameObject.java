@@ -6,6 +6,10 @@ import cz.cvut.fit.miadp.mvcgame.model.Vector;
 public abstract class GameObject {
     protected Position position;
 
+    public GameObject(Position position) {
+        this.position = position;
+    }
+
     public void move(Vector v) {
         this.position.add(v);
     }

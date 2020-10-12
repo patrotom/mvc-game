@@ -5,9 +5,7 @@ import cz.cvut.fit.miadp.mvcgame.model.Position;
 import cz.cvut.fit.miadp.mvcgame.model.Vector;
 
 public class Cannon extends GameObject {
-    public Cannon(Position position) {
-        this.position = position;
-    }
+    public Cannon(Position position) { super(position); }
 
     public void moveUp() {
         this.move(new Vector(0, -MvcGameConfig.MOVE_STEP));
