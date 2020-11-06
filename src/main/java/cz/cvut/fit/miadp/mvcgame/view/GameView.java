@@ -1,49 +1,53 @@
 package cz.cvut.fit.miadp.mvcgame.view;
 
+import cz.cvut.fit.miadp.mvcgame.config.MvcGameConfig;
 import cz.cvut.fit.miadp.mvcgame.controller.GameController;
 import cz.cvut.fit.miadp.mvcgame.model.GameModel;
-import cz.cvut.fit.miadp.mvcgame.model.Position;
+import cz.cvut.fit.miadp.mvcgame.model.gameobjects.AbsMissile;
+import cz.cvut.fit.miadp.mvcgame.model.gameobjects.GameObject;
 import cz.cvut.fit.miadp.mvcgame.observer.IObserver;
+import cz.cvut.fit.miadp.mvcgame.visitor.GameObjectsRender;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 
 public class GameView implements IObserver {
     private GameController controller;
     private GameModel model;
-    private GraphicsContext gr;
-    private boolean updated;
+    private GraphicsContext graphicsContext;
+    private GameObjectsRender render;
+    private int updateCnt;
 
     public GameView(GameModel model) {
         this.model = model;
-        this.controller = new GameController(model);
-        this.gr = null;
-        this.updated = true;
+        controller = new GameController(model);
+        graphicsContext = null;
+        updateCnt = 1;
         this.model.registerObserver(this);
+        render = new GameObjectsRender();
     }
 
     public void render() {
-        if (this.gr == null) return;
+        if (graphicsContext == null) return;
 
-        drawCannon();
-        updated = false;
+        if (updateCnt > 0) {
+            graphicsContext.clearRect(0, 0, MvcGameConfig.MAX_X, MvcGameConfig.MAX_Y);
+
+            for (GameObject gameObject : model.getGameObjects()) {
+                gameObject.acceptVisitor(render);
+            }
+
+            updateCnt = 0;
+        }
     }
 
     public GameController getController() { return this.controller; }
 
-    private void drawCannon() {
-        Position pos = model.getCannon().getPosition();
-        gr.drawImage(new Image("images/cannon.png"), pos.getX(), pos.getY());
-    }
-
     @Override
     public void update() {
-        updated = true;
-        render();
+        updateCnt++;
     }
 
-    public boolean getUpdated() { return updated; }
-
-    public void setGraphicsContext(GraphicsContext gr) {
-        this.gr = gr;
+    public void setGraphicsContext(GraphicsContext graphicsContext) {
+        this.graphicsContext = graphicsContext;
+        render.setGraphicsContext(graphicsContext);
     }
 }

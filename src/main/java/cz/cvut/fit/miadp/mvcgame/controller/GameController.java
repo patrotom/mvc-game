@@ -15,10 +15,13 @@ public class GameController {
         for (String code : pressedKeysCodes) {
             switch(code) {
                 case "UP":
-                    this.model.moveCannonUp();
+                    model.moveCannonUp();
                     break;
                 case "DOWN":
-                    this.model.moveCannonDown();
+                    model.moveCannonDown();
+                    break;
+                case "SPACE":
+                    model.shootCannon();
                     break;
                 default:
                     //nothing

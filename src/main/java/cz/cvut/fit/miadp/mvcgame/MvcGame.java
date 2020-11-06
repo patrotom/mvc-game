@@ -23,17 +23,12 @@ public class MvcGame {
     }
 
     public void update() {
-        model.update();
+        model.timeTick();
     }
 
     public void render(GraphicsContext gr) {
         view.setGraphicsContext(gr);
-
-        // TODO: Fix the clearing of already rendered game objects when they are moved
-        if (view.getUpdated()) {
-            gr.clearRect(0, 0, getWindowWidth(), getWindowHeight());
-            view.render();
-        }
+        view.render();
     }
 
     public String getWindowTitle() { return "MVC Game"; }

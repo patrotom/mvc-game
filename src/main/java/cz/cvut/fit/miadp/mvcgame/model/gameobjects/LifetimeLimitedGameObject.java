@@ -8,7 +8,7 @@ public abstract class LifetimeLimitedGameObject extends GameObject{
     private final Instant bornAt;
 
     public LifetimeLimitedGameObject(Position position) {
-        super(position);
+        this.position = position;
         bornAt = Instant.now();
     }
 
