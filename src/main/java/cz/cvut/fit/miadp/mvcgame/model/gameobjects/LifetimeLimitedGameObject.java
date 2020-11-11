@@ -2,17 +2,19 @@ package cz.cvut.fit.miadp.mvcgame.model.gameobjects;
 
 import cz.cvut.fit.miadp.mvcgame.model.Position;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 public abstract class LifetimeLimitedGameObject extends GameObject{
-    private final Instant bornAt;
+    private final LocalDateTime bornAt;
 
     public LifetimeLimitedGameObject(Position position) {
         this.position = position;
-        bornAt = Instant.now();
+        bornAt = LocalDateTime.now();
     }
 
-    int getAge() {
-        return (int)(Instant.now().getEpochSecond() - bornAt.getEpochSecond());
+    public long getAge() {
+        LocalDateTime now = LocalDateTime.now();
+        return ChronoUnit.SECONDS.between(bornAt, now);
     }
 }

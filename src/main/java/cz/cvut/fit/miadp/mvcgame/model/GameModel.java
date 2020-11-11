@@ -4,13 +4,15 @@ import cz.cvut.fit.miadp.mvcgame.abstractfactory.GameObjectsFactoryA;
 import cz.cvut.fit.miadp.mvcgame.abstractfactory.IGameObjectFactory;
 import cz.cvut.fit.miadp.mvcgame.config.MvcGameConfig;
 import cz.cvut.fit.miadp.mvcgame.model.gameobjects.*;
-import cz.cvut.fit.miadp.mvcgame.observer.IObservable;
 import cz.cvut.fit.miadp.mvcgame.observer.IObserver;
+import cz.cvut.fit.miadp.mvcgame.strategy.IMovingStrategy;
+import cz.cvut.fit.miadp.mvcgame.strategy.RealisticMovingStrategy;
+import cz.cvut.fit.miadp.mvcgame.strategy.SimpleMovingStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameModel implements IObservable {
+public class GameModel implements IGameModel {
     private int score;
     private AbsCannon cannon;
     private List<AbsMissile> missiles;
@@ -18,12 +20,15 @@ public class GameModel implements IObservable {
     private List<Enemy> enemies;
     private List<IObserver> observers;
     private IGameObjectFactory gameObjectFactory;
+    private IMovingStrategy movingStrategy;
 
     public GameModel() {
+        movingStrategy = new SimpleMovingStrategy();
         observers = new ArrayList<>();
-        gameObjectFactory = new GameObjectsFactoryA();
+        gameObjectFactory = new GameObjectsFactoryA(this);
         cannon = gameObjectFactory.createCannon();
         missiles = new ArrayList<>();
+        score = 0;
     }
 
     public void moveCannonUp() {
@@ -37,7 +42,27 @@ public class GameModel implements IObservable {
     }
 
     public void shootCannon() {
-        missiles.add(cannon.shoot());
+        missiles.addAll(cannon.shoot());
+        notifyObservers();
+    }
+
+    public void aimCannonUp() {
+        cannon.aimUp();
+        notifyObservers();
+    }
+
+    public void aimCannonDown() {
+        cannon.aimDown();
+        notifyObservers();
+    }
+
+    public void powerCannonDown() {
+        cannon.powerDown();
+        notifyObservers();
+    }
+
+    public void powerCannonUp() {
+        cannon.powerUp();
         notifyObservers();
     }
 
@@ -70,6 +95,15 @@ public class GameModel implements IObservable {
         update();
     }
 
+    public void toggleMovingStrategy() {
+        if (movingStrategy instanceof SimpleMovingStrategy) {
+            movingStrategy = new RealisticMovingStrategy();
+        }
+        else if (movingStrategy instanceof RealisticMovingStrategy) {
+            movingStrategy = new SimpleMovingStrategy();
+        }
+    }
+
     private void destroyMissiles() {
         List<AbsMissile> toRemove = new ArrayList<>();
 
@@ -82,7 +116,7 @@ public class GameModel implements IObservable {
 
     private void moveMissiles() {
         for (AbsMissile missile : missiles) {
-            missile.move(new Vector(MvcGameConfig.MOVE_STEP, 0));
+            missile.move();
         }
 
         destroyMissiles();
@@ -103,5 +137,25 @@ public class GameModel implements IObservable {
         gameObjects.add(cannon);
 
         return gameObjects;
+    }
+
+    public IMovingStrategy getMovingStrategy() {
+        return movingStrategy;
+    }
+
+    private class Memento {
+        private int score;
+    }
+
+    public Object createMemento() {
+        Memento memento = new Memento();
+        memento.score = score;
+
+        return memento;
+    }
+
+    public void setMemento(Object m) {
+        Memento memento = (Memento)m;
+        score = memento.score;
     }
 }
