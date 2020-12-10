@@ -19,7 +19,6 @@ public class GameObjectsFactoryA implements IGameObjectFactory{
     }
 
     public MissileA createMissile(double initAngle, int initVelocity) {
-        return new MissileA(new Position(MvcGameConfig.CANNON_POS_X,
-                MvcGameConfig.CANNON_POS_Y), initAngle, initVelocity, model.getMovingStrategy());
+        return new MissileA(model.getCannonPosition(), initAngle, initVelocity, model.getMovingStrategy());
     }
 }

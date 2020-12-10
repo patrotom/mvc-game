@@ -174,7 +174,7 @@ public class GameModel implements IGameModel {
 
     @Override
     public Position getCannonPosition() {
-        return cannon.getPosition();
+        return new Position(this.cannon.getPosition().getX(), this.cannon.getPosition().getY());
     }
 
     @Override
