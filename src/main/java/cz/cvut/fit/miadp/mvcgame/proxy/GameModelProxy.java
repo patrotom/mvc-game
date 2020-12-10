@@ -1,6 +1,8 @@
 package cz.cvut.fit.miadp.mvcgame.proxy;
 
+import cz.cvut.fit.miadp.mvcgame.command.AbstractGameCommand;
 import cz.cvut.fit.miadp.mvcgame.model.IGameModel;
+import cz.cvut.fit.miadp.mvcgame.model.Position;
 import cz.cvut.fit.miadp.mvcgame.model.gameobjects.GameObject;
 import cz.cvut.fit.miadp.mvcgame.observer.IObserver;
 import cz.cvut.fit.miadp.mvcgame.strategy.IMovingStrategy;
@@ -50,6 +52,16 @@ public class GameModelProxy implements IGameModel {
     }
 
     @Override
+    public void toggleMovingStrategy() {
+        subject.toggleMovingStrategy();
+    }
+
+    @Override
+    public void update() {
+        subject.update();
+    }
+
+    @Override
     public void registerObserver(IObserver observer) {
         subject.registerObserver(observer);
     }
@@ -87,5 +99,19 @@ public class GameModelProxy implements IGameModel {
     @Override
     public IMovingStrategy getMovingStrategy() {
         return subject.getMovingStrategy();
+    }
+
+    public Position getCannonPosition() {
+        return subject.getCannonPosition();
+    }
+
+    @Override
+    public void registerCommand(AbstractGameCommand command) {
+        subject.registerCommand(command);
+    }
+
+    @Override
+    public void undoLastCommand() {
+        subject.undoLastCommand();
     }
 }

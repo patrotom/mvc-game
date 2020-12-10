@@ -1,12 +1,11 @@
 package cz.cvut.fit.miadp.mvcgame.visitor;
 
+import cz.cvut.fit.miadp.mvcgame.bridge.IGameGraphics;
 import cz.cvut.fit.miadp.mvcgame.model.gameobjects.AbsCannon;
 import cz.cvut.fit.miadp.mvcgame.model.gameobjects.AbsMissile;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 
 public class GameObjectsRender implements IGameObjectsVisitor {
-    private GraphicsContext graphicsContext;
+    private IGameGraphics graphicsContext;
 
     public GameObjectsRender() {
         graphicsContext = null;
@@ -14,15 +13,15 @@ public class GameObjectsRender implements IGameObjectsVisitor {
 
     @Override
     public void visitCannon(AbsCannon cannon) {
-        graphicsContext.drawImage(new Image("images/cannon.png"), cannon.getPosition().getX(), cannon.getPosition().getY());
+        graphicsContext.drawImage("images/cannon.png", cannon.getPosition());
     }
 
     @Override
     public void visitMissile(AbsMissile missile) {
-        graphicsContext.drawImage(new Image("images/missile.png"), missile.getPosition().getX(), missile.getPosition().getY());
+        graphicsContext.drawImage("images/missile.png", missile.getPosition());
     }
 
-    public void setGraphicsContext(GraphicsContext graphicsContext) {
+    public void setGraphicsContext(IGameGraphics graphicsContext) {
         this.graphicsContext = graphicsContext;
     }
 }

@@ -2,6 +2,7 @@ package cz.cvut.fit.miadp.mvcgame.model;
 
 import cz.cvut.fit.miadp.mvcgame.abstractfactory.GameObjectsFactoryA;
 import cz.cvut.fit.miadp.mvcgame.abstractfactory.IGameObjectFactory;
+import cz.cvut.fit.miadp.mvcgame.command.AbstractGameCommand;
 import cz.cvut.fit.miadp.mvcgame.config.MvcGameConfig;
 import cz.cvut.fit.miadp.mvcgame.model.gameobjects.*;
 import cz.cvut.fit.miadp.mvcgame.observer.IObserver;
@@ -11,6 +12,9 @@ import cz.cvut.fit.miadp.mvcgame.strategy.SimpleMovingStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Stack;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class GameModel implements IGameModel {
     private int score;
@@ -21,6 +25,8 @@ public class GameModel implements IGameModel {
     private List<IObserver> observers;
     private IGameObjectFactory gameObjectFactory;
     private IMovingStrategy movingStrategy;
+    private Queue<AbstractGameCommand> unexecutedCommands = new LinkedBlockingQueue<>();
+    private Stack<AbstractGameCommand> executedCommands = new Stack<>();
 
     public GameModel() {
         movingStrategy = new SimpleMovingStrategy();
@@ -67,6 +73,7 @@ public class GameModel implements IGameModel {
     }
 
     public void update() {
+        executeCommands();
         moveMissiles();
     }
 
@@ -145,11 +152,15 @@ public class GameModel implements IGameModel {
 
     private class Memento {
         private int score;
+        private int cannonX;
+        private int cannonY;
     }
 
     public Object createMemento() {
         Memento memento = new Memento();
         memento.score = score;
+        memento.cannonX = getCannonPosition().getX();
+        memento.cannonY = getCannonPosition().getY();
 
         return memento;
     }
@@ -157,5 +168,34 @@ public class GameModel implements IGameModel {
     public void setMemento(Object m) {
         Memento memento = (Memento)m;
         score = memento.score;
+        cannon.getPosition().setX(memento.cannonX);
+        cannon.getPosition().setY(memento.cannonY);
+    }
+
+    @Override
+    public Position getCannonPosition() {
+        return cannon.getPosition();
+    }
+
+    @Override
+    public void registerCommand(AbstractGameCommand command) {
+        unexecutedCommands.add(command);
+    }
+
+    @Override
+    public void undoLastCommand() {
+        if (executedCommands.isEmpty()) return;
+
+        AbstractGameCommand command = executedCommands.pop();
+        command.unExecute();
+        notifyObservers();
+    }
+
+    private void executeCommands() {
+        while(!unexecutedCommands.isEmpty()) {
+            AbstractGameCommand command = unexecutedCommands.poll();
+            command.doExecute();
+            executedCommands.push(command);
+        }
     }
 }

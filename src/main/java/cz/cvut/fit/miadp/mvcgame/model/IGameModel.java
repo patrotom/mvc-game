@@ -1,5 +1,6 @@
 package cz.cvut.fit.miadp.mvcgame.model;
 
+import cz.cvut.fit.miadp.mvcgame.command.AbstractGameCommand;
 import cz.cvut.fit.miadp.mvcgame.model.gameobjects.GameObject;
 import cz.cvut.fit.miadp.mvcgame.observer.IObservable;
 import cz.cvut.fit.miadp.mvcgame.strategy.IMovingStrategy;
@@ -14,9 +15,16 @@ public interface IGameModel extends IObservable {
     void aimCannonDown();
     void powerCannonDown();
     void powerCannonUp();
-    List<GameObject> getGameObjects();
+    void toggleMovingStrategy();
+
+    void update();
     void timeTick();
+    List<GameObject> getGameObjects();
+    IMovingStrategy getMovingStrategy();
     Object createMemento();
     void setMemento(Object m);
-    public IMovingStrategy getMovingStrategy();
+    Position getCannonPosition();
+
+    void registerCommand(AbstractGameCommand command);
+    void undoLastCommand();
 }

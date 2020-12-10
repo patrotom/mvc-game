@@ -1,17 +1,16 @@
 package cz.cvut.fit.miadp.mvcgame.view;
 
-import cz.cvut.fit.miadp.mvcgame.config.MvcGameConfig;
+import cz.cvut.fit.miadp.mvcgame.bridge.IGameGraphics;
 import cz.cvut.fit.miadp.mvcgame.controller.GameController;
 import cz.cvut.fit.miadp.mvcgame.model.IGameModel;
 import cz.cvut.fit.miadp.mvcgame.model.gameobjects.GameObject;
 import cz.cvut.fit.miadp.mvcgame.observer.IObserver;
 import cz.cvut.fit.miadp.mvcgame.visitor.GameObjectsRender;
-import javafx.scene.canvas.GraphicsContext;
 
 public class GameView implements IObserver {
     private GameController controller;
     private IGameModel model;
-    private GraphicsContext graphicsContext;
+    private IGameGraphics graphicsContext;
     private GameObjectsRender render;
     private int updateCnt;
 
@@ -28,7 +27,7 @@ public class GameView implements IObserver {
         if (graphicsContext == null) return;
 
         if (updateCnt > 0) {
-            graphicsContext.clearRect(0, 0, MvcGameConfig.MAX_X, MvcGameConfig.MAX_Y);
+            graphicsContext.clear();
 
             for (GameObject gameObject : model.getGameObjects()) {
                 gameObject.acceptVisitor(render);
@@ -45,7 +44,7 @@ public class GameView implements IObserver {
         updateCnt++;
     }
 
-    public void setGraphicsContext(GraphicsContext graphicsContext) {
+    public void setGraphicsContext(IGameGraphics graphicsContext) {
         this.graphicsContext = graphicsContext;
         render.setGraphicsContext(graphicsContext);
     }
