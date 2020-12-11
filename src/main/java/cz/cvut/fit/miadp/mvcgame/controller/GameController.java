@@ -1,8 +1,6 @@
 package cz.cvut.fit.miadp.mvcgame.controller;
 
-import cz.cvut.fit.miadp.mvcgame.command.MoveCannonDownCommand;
-import cz.cvut.fit.miadp.mvcgame.command.MoveCannonUpCommand;
-import cz.cvut.fit.miadp.mvcgame.memento.CareTaker;
+import cz.cvut.fit.miadp.mvcgame.command.*;
 import cz.cvut.fit.miadp.mvcgame.model.IGameModel;
 
 import java.util.List;
@@ -24,31 +22,25 @@ public class GameController {
                     model.registerCommand(new MoveCannonDownCommand(model));
                     break;
                 case "SPACE":
-                    model.shootCannon();
+                    model.registerCommand(new ShootCannonCommand(model));
                     break;
                 case "A":
-                    model.aimCannonUp();
+                    model.registerCommand(new AimCannonUpCommand(model));
                     break;
                 case "Z":
-                    model.aimCannonDown();
+                    model.registerCommand(new AimCannonDownCommand(model));
                     break;
                 case "Q":
-                    model.powerCannonDown();
+                    model.registerCommand(new PowerCannonDownCommand(model));
                     break;
                 case "W":
-                    model.powerCannonUp();
+                    model.registerCommand(new PowerCannonUpCommand(model));
                     break;
                 case "M":
-                    model.toggleMovingStrategy();
+                    model.registerCommand(new ToggleMovingStrategyCommand(model));
                     break;
-//                case "S":
-//                    CareTaker.getInstance().createMemento();
-//                    break;
-//                case "R":
-//                    CareTaker.getInstance().setMemento();
-//                    break;
                 case "Y":
-                    model.undoLastCommand();
+                    model.registerCommand(new UndoLastCommandCommand(model));
                     break;
                 default:
                     //nothing
