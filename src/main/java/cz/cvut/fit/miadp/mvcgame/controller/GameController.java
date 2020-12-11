@@ -39,11 +39,12 @@ public class GameController {
                 case "M":
                     model.registerCommand(new ToggleMovingStrategyCommand(model));
                     break;
-                case "Y":
-                    model.registerCommand(new UndoLastCommandCommand(model));
+                case "B":
+                    model.undoLastCommand(); // TODO: Some weird stuff going on here
+//                    model.registerCommand(new UndoLastCommandCommand(model));
                     break;
                 default:
-                    //nothing
+                    // Nothing
             }
         }
     }

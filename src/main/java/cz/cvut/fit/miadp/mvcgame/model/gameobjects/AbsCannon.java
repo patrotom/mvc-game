@@ -20,6 +20,8 @@ public abstract class AbsCannon extends GameObject {
     public abstract void aimDown();
     public abstract void powerUp();
     public abstract void powerDown();
+    public abstract int getPower();
+    public abstract double getAngle();
 
     @Override
     public void acceptVisitor(IGameObjectsVisitor render) {

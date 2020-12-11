@@ -20,7 +20,7 @@ public class GameModel implements IGameModel {
     private int score;
     private AbsCannon cannon;
     private List<AbsMissile> missiles;
-    private GameInfo gameInfo;
+    private AbsGameInfo gameInfo;
     private List<Enemy> enemies;
     private List<IObserver> observers;
     private IGameObjectFactory gameObjectFactory;
@@ -35,6 +35,13 @@ public class GameModel implements IGameModel {
         cannon = gameObjectFactory.createCannon();
         missiles = new ArrayList<>();
         score = 0;
+        updateGameInfo();
+    }
+
+    public void update() {
+        executeCommands();
+        moveMissiles();
+        updateGameInfo();
     }
 
     public void moveCannonUp() {
@@ -70,11 +77,6 @@ public class GameModel implements IGameModel {
     public void powerCannonUp() {
         cannon.powerUp();
         notifyObservers();
-    }
-
-    public void update() {
-        executeCommands();
-        moveMissiles();
     }
 
     @Override
@@ -130,9 +132,11 @@ public class GameModel implements IGameModel {
         notifyObservers();
     }
 
-    public AbsCannon getCannon() { return cannon; }
-
-    public GameInfo getGameInfo() { return gameInfo; }
+    private void updateGameInfo() {
+        String text = "Force: " + cannon.getPower() + ", Angle: " + String.format("%.2f", cannon.getAngle()) +
+                ", Gravity: " + MvcGameConfig.GRAVITY + ", Score: " + score;
+        gameInfo = gameObjectFactory.createGameInfo(text);
+    }
 
     public List<Enemy> getEnemies() { return enemies; }
 
@@ -142,6 +146,7 @@ public class GameModel implements IGameModel {
         List<GameObject> gameObjects = new ArrayList<>();
         gameObjects.addAll(missiles);
         gameObjects.add(cannon);
+        gameObjects.add(gameInfo);
 
         return gameObjects;
     }

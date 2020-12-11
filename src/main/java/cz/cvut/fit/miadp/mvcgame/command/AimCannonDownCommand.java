@@ -9,6 +9,6 @@ public class AimCannonDownCommand extends AbstractGameCommand {
 
     @Override
     protected void execute() {
-        subject.moveCannonDown();
+        subject.aimCannonDown();
     }
 }
