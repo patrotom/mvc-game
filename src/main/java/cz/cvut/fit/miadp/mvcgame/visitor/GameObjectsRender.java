@@ -1,10 +1,7 @@
 package cz.cvut.fit.miadp.mvcgame.visitor;
 
 import cz.cvut.fit.miadp.mvcgame.bridge.IGameGraphics;
-import cz.cvut.fit.miadp.mvcgame.model.gameobjects.AbsCannon;
-import cz.cvut.fit.miadp.mvcgame.model.gameobjects.AbsEnemy;
-import cz.cvut.fit.miadp.mvcgame.model.gameobjects.AbsGameInfo;
-import cz.cvut.fit.miadp.mvcgame.model.gameobjects.AbsMissile;
+import cz.cvut.fit.miadp.mvcgame.model.gameobjects.*;
 
 public class GameObjectsRender implements IGameObjectsVisitor {
     private IGameGraphics graphicsContext;
@@ -31,6 +28,11 @@ public class GameObjectsRender implements IGameObjectsVisitor {
     @Override
     public void visitEnemy(AbsEnemy enemy) {
         graphicsContext.drawImage(enemy.getIconName(), enemy.getPosition());
+    }
+
+    @Override
+    public void visitCollision(AbsCollision collision) {
+        graphicsContext.drawImage("images/collision.png", collision.getPosition());
     }
 
     public void setGraphicsContext(IGameGraphics graphicsContext) {

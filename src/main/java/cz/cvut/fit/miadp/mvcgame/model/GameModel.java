@@ -21,6 +21,7 @@ public class GameModel implements IGameModel {
     private AbsGameInfo gameInfo;
     private List<AbsEnemy> enemies;
     private List<IObserver> observers;
+    private List<AbsCollision> collisions;
     private IGameObjectFactory gameObjectFactoryA;
     private IGameObjectFactory gameObjectFactoryB;
     private IMovingStrategy movingStrategy;
@@ -35,6 +36,7 @@ public class GameModel implements IGameModel {
         cannon = gameObjectFactoryA.createCannon();
         missiles = new ArrayList<>();
         enemies = new ArrayList<>();
+        collisions = new ArrayList<>();
         score = 0;
         updateGameInfo();
         spawnEnemies();
@@ -45,6 +47,7 @@ public class GameModel implements IGameModel {
         moveMissiles();
         updateGameInfo();
         spawnEnemies();
+        destroyCollisions();
     }
 
     public void moveCannonUp() {
@@ -150,13 +153,20 @@ public class GameModel implements IGameModel {
             int eX = enemies.get(i).getPosition().getX();
             int eY = enemies.get(i).getPosition().getY();
 
-            if (mX + MvcGameConfig.ENEMY_WIDTH >= eX && mX <= eX && mY + MvcGameConfig.ENEMY_HEIGHT >= eY && mY <= eY) {
-                // TODO: Add collision
+            if (mX + MvcGameConfig.ENEMY_WIDTH >= eX && mX <= eX && mY + MvcGameConfig.ENEMY_HEIGHT + 20 >= eY && mY - 20 <= eY) {
+                collisions.add(new AbsCollision(new Position(eX, eY)));
                 enemies.remove(i);
                 return true;
             }
         }
         return false;
+    }
+
+    private void destroyCollisions() {
+        for (int i = 0; i < collisions.size(); i++) {
+            if (collisions.get(i).getAge() >= 1500)
+                collisions.remove(i);
+        }
     }
 
     private void updateGameInfo() {
@@ -175,6 +185,7 @@ public class GameModel implements IGameModel {
         gameObjects.add(cannon);
         gameObjects.add(gameInfo);
         gameObjects.addAll(enemies);
+        gameObjects.addAll(collisions);
 
         return gameObjects;
     }
