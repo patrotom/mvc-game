@@ -8,10 +8,10 @@ public class RealisticMovingStrategy implements IMovingStrategy {
     public void updatePosition(AbsMissile missile) {
         int initVelocity = missile.getInitVelocity();
         double initAngle = missile.getInitAngle();
-        long time = missile.getAge();
+        long time = missile.getAge() / 100;
 
         int dx = (int)(initVelocity * time * Math.cos(initAngle));
-        int dy = (int)(initVelocity * time * Math.sin(initAngle) - (0.5 * MvcGameConfig.GRAVITY * time * time));
+        int dy = (int)(initVelocity * time * Math.sin(initAngle) + (0.5 * MvcGameConfig.GRAVITY * time * time));
 
         missile.move(new Vector(dx, dy));
     }

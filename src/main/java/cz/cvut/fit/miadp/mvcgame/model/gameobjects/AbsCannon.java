@@ -5,6 +5,7 @@ import cz.cvut.fit.miadp.mvcgame.state.IShootingMode;
 import cz.cvut.fit.miadp.mvcgame.state.SingleShootingMode;
 import cz.cvut.fit.miadp.mvcgame.visitor.IGameObjectsVisitor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public abstract class AbsCannon extends GameObject {
@@ -15,7 +16,7 @@ public abstract class AbsCannon extends GameObject {
     public abstract void moveUp();
     public abstract void moveDown();
     public abstract List<AbsMissile> shoot();
-    public  abstract void primitiveShoot();
+    public abstract void primitiveShoot();
     public abstract void aimUp();
     public abstract void aimDown();
     public abstract void powerUp();

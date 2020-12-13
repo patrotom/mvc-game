@@ -3,8 +3,8 @@ package cz.cvut.fit.miadp.mvcgame.abstractfactory;
 import cz.cvut.fit.miadp.mvcgame.config.MvcGameConfig;
 import cz.cvut.fit.miadp.mvcgame.model.IGameModel;
 import cz.cvut.fit.miadp.mvcgame.model.Position;
-import cz.cvut.fit.miadp.mvcgame.model.gameobjects.AbsGameInfo;
 import cz.cvut.fit.miadp.mvcgame.model.gameobjects.familya.CannonA;
+import cz.cvut.fit.miadp.mvcgame.model.gameobjects.familya.EnemyA;
 import cz.cvut.fit.miadp.mvcgame.model.gameobjects.familya.GameInfoA;
 import cz.cvut.fit.miadp.mvcgame.model.gameobjects.familya.MissileA;
 
@@ -26,7 +26,12 @@ public class GameObjectsFactoryA implements IGameObjectFactory{
     }
 
     @Override
-    public AbsGameInfo createGameInfo(String text) {
+    public GameInfoA createGameInfo(String text) {
         return new GameInfoA(text, new Position(MvcGameConfig.INFO_POS_X, MvcGameConfig.INFO_POS_Y));
+    }
+
+    @Override
+    public EnemyA createEnemy(Position position) {
+        return new EnemyA(position);
     }
 }

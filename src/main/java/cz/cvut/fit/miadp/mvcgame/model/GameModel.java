@@ -1,6 +1,7 @@
 package cz.cvut.fit.miadp.mvcgame.model;
 
 import cz.cvut.fit.miadp.mvcgame.abstractfactory.GameObjectsFactoryA;
+import cz.cvut.fit.miadp.mvcgame.abstractfactory.GameObjectsFactoryB;
 import cz.cvut.fit.miadp.mvcgame.abstractfactory.IGameObjectFactory;
 import cz.cvut.fit.miadp.mvcgame.command.AbstractGameCommand;
 import cz.cvut.fit.miadp.mvcgame.config.MvcGameConfig;
@@ -10,10 +11,7 @@ import cz.cvut.fit.miadp.mvcgame.strategy.IMovingStrategy;
 import cz.cvut.fit.miadp.mvcgame.strategy.RealisticMovingStrategy;
 import cz.cvut.fit.miadp.mvcgame.strategy.SimpleMovingStrategy;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Stack;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class GameModel implements IGameModel {
@@ -21,9 +19,10 @@ public class GameModel implements IGameModel {
     private AbsCannon cannon;
     private List<AbsMissile> missiles;
     private AbsGameInfo gameInfo;
-    private List<Enemy> enemies;
+    private List<AbsEnemy> enemies;
     private List<IObserver> observers;
-    private IGameObjectFactory gameObjectFactory;
+    private IGameObjectFactory gameObjectFactoryA;
+    private IGameObjectFactory gameObjectFactoryB;
     private IMovingStrategy movingStrategy;
     private Queue<AbstractGameCommand> unexecutedCommands = new LinkedBlockingQueue<>();
     private Stack<AbstractGameCommand> executedCommands = new Stack<>();
@@ -31,17 +30,21 @@ public class GameModel implements IGameModel {
     public GameModel() {
         movingStrategy = new SimpleMovingStrategy();
         observers = new ArrayList<>();
-        gameObjectFactory = new GameObjectsFactoryA(this);
-        cannon = gameObjectFactory.createCannon();
+        gameObjectFactoryA = new GameObjectsFactoryA(this);
+        gameObjectFactoryB = new GameObjectsFactoryB();
+        cannon = gameObjectFactoryA.createCannon();
         missiles = new ArrayList<>();
+        enemies = new ArrayList<>();
         score = 0;
         updateGameInfo();
+        spawnEnemies();
     }
 
     public void update() {
         executeCommands();
         moveMissiles();
         updateGameInfo();
+        spawnEnemies();
     }
 
     public void moveCannonUp() {
@@ -113,6 +116,10 @@ public class GameModel implements IGameModel {
         }
     }
 
+    public void toggleShootingMode() {
+        cannon.toggleShootingMode();
+    }
+
     private void destroyMissiles() {
         List<AbsMissile> toRemove = new ArrayList<>();
 
@@ -124,21 +131,41 @@ public class GameModel implements IGameModel {
     }
 
     private void moveMissiles() {
-        for (AbsMissile missile : missiles) {
-            missile.move();
+        for (int i = 0; i < missiles.size(); i++) {
+            missiles.get(i).move();
+            if (collisionOccurred(missiles.get(i))) {
+                missiles.remove(missiles.get(i));
+                score++;
+            }
         }
 
         destroyMissiles();
         notifyObservers();
     }
 
+    private boolean collisionOccurred(AbsMissile missile) {
+        for (int i = 0; i < enemies.size(); i++) {
+            int mX = missile.getPosition().getX();
+            int mY = missile.getPosition().getY();
+            int eX = enemies.get(i).getPosition().getX();
+            int eY = enemies.get(i).getPosition().getY();
+
+            if (mX + MvcGameConfig.ENEMY_WIDTH >= eX && mX <= eX && mY + MvcGameConfig.ENEMY_HEIGHT >= eY && mY <= eY) {
+                // TODO: Add collision
+                enemies.remove(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void updateGameInfo() {
         String text = "Force: " + cannon.getPower() + ", Angle: " + String.format("%.2f", cannon.getAngle()) +
                 ", Gravity: " + MvcGameConfig.GRAVITY + ", Score: " + score;
-        gameInfo = gameObjectFactory.createGameInfo(text);
+        gameInfo = gameObjectFactoryA.createGameInfo(text);
     }
 
-    public List<Enemy> getEnemies() { return enemies; }
+    public List<AbsEnemy> getEnemies() { return enemies; }
 
     public List<AbsMissile> getMissiles() { return missiles; }
 
@@ -147,6 +174,7 @@ public class GameModel implements IGameModel {
         gameObjects.addAll(missiles);
         gameObjects.add(cannon);
         gameObjects.add(gameInfo);
+        gameObjects.addAll(enemies);
 
         return gameObjects;
     }
@@ -180,6 +208,24 @@ public class GameModel implements IGameModel {
     @Override
     public Position getCannonPosition() {
         return new Position(this.cannon.getPosition().getX(), this.cannon.getPosition().getY());
+    }
+
+    private void spawnEnemies() {
+        while (enemies.size() < MvcGameConfig.MAX_ENEMIES) {
+            Random rand = new Random();
+            int x = rand.ints(
+                    1, MvcGameConfig.ENEMIES_OFFSET_X, MvcGameConfig.MAX_X - MvcGameConfig.ENEMIES_OFFSET
+            ).findFirst().getAsInt();
+            int y = rand.ints(
+                    1, MvcGameConfig.ENEMIES_OFFSET, MvcGameConfig.MAX_Y - MvcGameConfig.ENEMIES_OFFSET
+            ).findFirst().getAsInt();
+            Position enemyPos = new Position(x, y);
+            if (rand.nextInt(2) == 0)
+                enemies.add(gameObjectFactoryA.createEnemy(enemyPos));
+            else
+                enemies.add(gameObjectFactoryB.createEnemy(enemyPos));
+            notifyObservers();
+        }
     }
 
     @Override

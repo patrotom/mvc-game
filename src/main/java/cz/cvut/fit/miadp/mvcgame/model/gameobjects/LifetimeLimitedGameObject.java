@@ -13,8 +13,13 @@ public abstract class LifetimeLimitedGameObject extends GameObject{
         bornAt = LocalDateTime.now();
     }
 
+    public LifetimeLimitedGameObject(Position position, LocalDateTime bornAt) {
+        this.position = position;
+        this.bornAt = bornAt;
+    }
+
     public long getAge() {
         LocalDateTime now = LocalDateTime.now();
-        return ChronoUnit.SECONDS.between(bornAt, now);
+        return ChronoUnit.MILLIS.between(bornAt, now);
     }
 }

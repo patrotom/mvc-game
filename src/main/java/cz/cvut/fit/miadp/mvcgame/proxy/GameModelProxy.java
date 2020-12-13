@@ -57,6 +57,11 @@ public class GameModelProxy implements IGameModel {
     }
 
     @Override
+    public void toggleShootingMode() {
+        subject.toggleShootingMode();
+    }
+
+    @Override
     public void update() {
         subject.update();
     }

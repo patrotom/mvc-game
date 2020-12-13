@@ -7,6 +7,7 @@ import cz.cvut.fit.miadp.mvcgame.model.Vector;
 import cz.cvut.fit.miadp.mvcgame.model.gameobjects.AbsCannon;
 import cz.cvut.fit.miadp.mvcgame.model.gameobjects.AbsMissile;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,12 +28,12 @@ public class CannonA extends AbsCannon {
 
     @Override
     public void moveUp() {
-        move(new Vector(0, -MvcGameConfig.MOVE_STEP));
+        move(new Vector(0, -MvcGameConfig.CANON_MOVE_STEP));
     }
 
     @Override
     public void moveDown() {
-        move(new Vector(0, MvcGameConfig.MOVE_STEP));
+        move(new Vector(0, MvcGameConfig.CANON_MOVE_STEP));
     }
 
     @Override

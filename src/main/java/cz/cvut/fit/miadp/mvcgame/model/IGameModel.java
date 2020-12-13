@@ -16,6 +16,7 @@ public interface IGameModel extends IObservable {
     void powerCannonDown();
     void powerCannonUp();
     void toggleMovingStrategy();
+    void toggleShootingMode();
 
     void update();
     void timeTick();
