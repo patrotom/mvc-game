@@ -3,7 +3,6 @@ package cz.cvut.fit.miadp.mvcgame.abstractfactory;
 import cz.cvut.fit.miadp.mvcgame.config.MvcGameConfig;
 import cz.cvut.fit.miadp.mvcgame.model.IGameModel;
 import cz.cvut.fit.miadp.mvcgame.model.Position;
-import cz.cvut.fit.miadp.mvcgame.model.gameobjects.AbsCollision;
 import cz.cvut.fit.miadp.mvcgame.model.gameobjects.familya.*;
 
 public class GameObjectsFactoryA implements IGameObjectFactory{
@@ -24,8 +23,12 @@ public class GameObjectsFactoryA implements IGameObjectFactory{
     }
 
     @Override
-    public GameInfoA createGameInfo(String text) {
-        return new GameInfoA(text, new Position(MvcGameConfig.INFO_POS_X, MvcGameConfig.INFO_POS_Y));
+    public GameInfoA createGameInfo(String text, String type) {
+        if (type == "up")
+            return new GameInfoA(text, new Position(MvcGameConfig.INFO_POS_X, MvcGameConfig.INFO_POS_Y));
+
+        return new GameInfoA(text, new Position(MvcGameConfig.INFO_POS_X,
+                MvcGameConfig.MAX_Y - MvcGameConfig.INFO_POS_Y));
     }
 
     @Override

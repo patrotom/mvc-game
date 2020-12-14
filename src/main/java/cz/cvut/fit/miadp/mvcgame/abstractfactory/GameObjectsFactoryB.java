@@ -16,7 +16,7 @@ public class GameObjectsFactoryB implements IGameObjectFactory {
     }
 
     @Override
-    public AbsGameInfo createGameInfo(String text) {
+    public AbsGameInfo createGameInfo(String text, String type) {
         return null;
     }
 

@@ -9,4 +9,9 @@ public class SimpleMovingStrategy implements IMovingStrategy {
     public void updatePosition(AbsMissile missile) {
         missile.move(new Vector(MvcGameConfig.MOVE_STEP, 0));
     }
+
+    @Override
+    public String getName() {
+        return "simple";
+    }
 }

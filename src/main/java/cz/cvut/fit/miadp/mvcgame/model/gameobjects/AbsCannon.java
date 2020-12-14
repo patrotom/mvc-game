@@ -5,7 +5,6 @@ import cz.cvut.fit.miadp.mvcgame.state.IShootingMode;
 import cz.cvut.fit.miadp.mvcgame.state.SingleShootingMode;
 import cz.cvut.fit.miadp.mvcgame.visitor.IGameObjectsVisitor;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public abstract class AbsCannon extends GameObject {
@@ -36,5 +35,9 @@ public abstract class AbsCannon extends GameObject {
         else if (shootingMode instanceof DoubleShootingMode) {
             shootingMode = SINGLE_SHOOTING_MODE;
         }
+    }
+
+    public IShootingMode getShootingMode() {
+        return shootingMode;
     }
 }

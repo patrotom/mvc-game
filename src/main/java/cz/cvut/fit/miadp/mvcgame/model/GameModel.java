@@ -18,7 +18,7 @@ public class GameModel implements IGameModel {
     private int score;
     private AbsCannon cannon;
     private List<AbsMissile> missiles;
-    private AbsGameInfo gameInfo;
+    private List<AbsGameInfo> gameInfos;
     private List<AbsEnemy> enemies;
     private List<IObserver> observers;
     private List<AbsCollision> collisions;
@@ -37,15 +37,16 @@ public class GameModel implements IGameModel {
         missiles = new ArrayList<>();
         enemies = new ArrayList<>();
         collisions = new ArrayList<>();
+        gameInfos = new ArrayList<>();
         score = 0;
-        updateGameInfo();
+        updateGameInfos();
         spawnEnemies();
     }
 
     public void update() {
         executeCommands();
         moveMissiles();
-        updateGameInfo();
+        updateGameInfos();
         spawnEnemies();
         destroyCollisions();
     }
@@ -154,7 +155,7 @@ public class GameModel implements IGameModel {
             int eY = enemies.get(i).getPosition().getY();
 
             if (mX + MvcGameConfig.ENEMY_WIDTH >= eX && mX <= eX && mY + MvcGameConfig.ENEMY_HEIGHT + 20 >= eY && mY - 20 <= eY) {
-                collisions.add(new AbsCollision(new Position(eX, eY)));
+                collisions.add(gameObjectFactoryA.createCollision(new Position(eX, eY)));
                 enemies.remove(i);
                 return true;
             }
@@ -169,10 +170,13 @@ public class GameModel implements IGameModel {
         }
     }
 
-    private void updateGameInfo() {
-        String text = "Force: " + cannon.getPower() + ", Angle: " + String.format("%.2f", cannon.getAngle()) +
+    private void updateGameInfos() {
+        gameInfos.clear();
+        String text1 = "Force: " + cannon.getPower() + ", Angle: " + String.format("%.2f", cannon.getAngle()) +
                 ", Gravity: " + MvcGameConfig.GRAVITY + ", Score: " + score;
-        gameInfo = gameObjectFactoryA.createGameInfo(text);
+        gameInfos.add(gameObjectFactoryA.createGameInfo(text1, "up"));
+        String text2 = "Shooting mode: " + cannon.getShootingMode().getName() + ", Moving mode: " + movingStrategy.getName();
+        gameInfos.add(gameObjectFactoryA.createGameInfo(text2, "down"));
     }
 
     public List<AbsEnemy> getEnemies() { return enemies; }
@@ -183,7 +187,7 @@ public class GameModel implements IGameModel {
         List<GameObject> gameObjects = new ArrayList<>();
         gameObjects.addAll(missiles);
         gameObjects.add(cannon);
-        gameObjects.add(gameInfo);
+        gameObjects.addAll(gameInfos);
         gameObjects.addAll(enemies);
         gameObjects.addAll(collisions);
 
