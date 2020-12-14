@@ -202,6 +202,12 @@ public class GameModel implements IGameModel {
         private int score;
         private int cannonX;
         private int cannonY;
+        private double angle;
+        private int power;
+        private List<AbsMissile> missiles;
+        private List<AbsGameInfo> gameInfos;
+        private List<AbsEnemy> enemies;
+        private List<AbsCollision> collisions;
     }
 
     public Object createMemento() {
@@ -209,6 +215,12 @@ public class GameModel implements IGameModel {
         memento.score = score;
         memento.cannonX = getCannonPosition().getX();
         memento.cannonY = getCannonPosition().getY();
+        memento.angle = cannon.getAngle();
+        memento.power = cannon.getPower();
+        memento.missiles = new ArrayList<>(missiles);
+        memento.gameInfos = new ArrayList<>(gameInfos);
+        memento.enemies = new ArrayList<>(enemies);
+        memento.collisions = new ArrayList<>(collisions);
 
         return memento;
     }
@@ -218,6 +230,16 @@ public class GameModel implements IGameModel {
         score = memento.score;
         cannon.getPosition().setX(memento.cannonX);
         cannon.getPosition().setY(memento.cannonY);
+        cannon.setAngle(memento.angle);
+        cannon.setPower(memento.power);
+        missiles.clear();
+        missiles.addAll(memento.missiles);
+        gameInfos.clear();
+        gameInfos.addAll(memento.gameInfos);
+        enemies.clear();
+        enemies.addAll(memento.enemies);
+        collisions.clear();
+        collisions.addAll(memento.collisions);
     }
 
     @Override

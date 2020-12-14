@@ -7,7 +7,6 @@ import cz.cvut.fit.miadp.mvcgame.model.Vector;
 import cz.cvut.fit.miadp.mvcgame.model.gameobjects.AbsCannon;
 import cz.cvut.fit.miadp.mvcgame.model.gameobjects.AbsMissile;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,5 +75,15 @@ public class CannonA extends AbsCannon {
     @Override
     public double getAngle() {
         return angle;
+    }
+
+    @Override
+    public void setAngle(double angle) {
+        this.angle = angle;
+    }
+
+    @Override
+    public void setPower(int power) {
+        this.power = power;
     }
 }
