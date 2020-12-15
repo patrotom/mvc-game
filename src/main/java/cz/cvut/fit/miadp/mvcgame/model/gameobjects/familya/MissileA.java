@@ -16,4 +16,9 @@ public class MissileA extends AbsMissile {
     public void move() {
         movingStrategy.updatePosition(this);
     }
+
+    @Override
+    public boolean isNull() {
+        return false;
+    }
 }

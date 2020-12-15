@@ -1,10 +1,8 @@
 package cz.cvut.fit.miadp.mvcgame.model;
 
 public class Vector {
-    private int dX = 0;
-    private int dY = 0;
-
-    public Vector() {}
+    private int dX;
+    private int dY;
 
     public Vector(int dX, int dY) {
         this.dX = dX;
@@ -14,8 +12,4 @@ public class Vector {
     public int getDX() { return this.dX; }
 
     public int getDY() { return this.dY; }
-
-    public void setDY(int y) { this.dY = y; }
-
-    public void setDX(int x) { this.dX = x; }
 }

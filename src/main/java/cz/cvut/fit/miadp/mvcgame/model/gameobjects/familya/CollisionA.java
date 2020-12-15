@@ -7,4 +7,9 @@ public class CollisionA extends AbsCollision {
     public CollisionA(Position position) {
         super(position);
     }
+
+    @Override
+    public boolean isNull() {
+        return false;
+    }
 }

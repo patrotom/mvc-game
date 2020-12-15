@@ -5,16 +5,21 @@ import cz.cvut.fit.miadp.mvcgame.abstractfactory.GameObjectsFactoryB;
 import cz.cvut.fit.miadp.mvcgame.abstractfactory.IGameObjectFactory;
 import cz.cvut.fit.miadp.mvcgame.command.AbstractGameCommand;
 import cz.cvut.fit.miadp.mvcgame.config.MvcGameConfig;
+import cz.cvut.fit.miadp.mvcgame.mixin.MediaMixin;
 import cz.cvut.fit.miadp.mvcgame.model.gameobjects.*;
 import cz.cvut.fit.miadp.mvcgame.observer.IObserver;
 import cz.cvut.fit.miadp.mvcgame.strategy.IMovingStrategy;
 import cz.cvut.fit.miadp.mvcgame.strategy.RealisticMovingStrategy;
 import cz.cvut.fit.miadp.mvcgame.strategy.SimpleMovingStrategy;
 
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class GameModel implements IGameModel {
+public class GameModel implements IGameModel, MediaMixin {
     private int score;
     private AbsCannon cannon;
     private List<AbsMissile> missiles;
@@ -63,6 +68,7 @@ public class GameModel implements IGameModel {
 
     public void shootCannon() {
         missiles.addAll(cannon.shoot());
+        playSound("shoot.wav");
         notifyObservers();
     }
 
@@ -138,6 +144,7 @@ public class GameModel implements IGameModel {
         for (int i = 0; i < missiles.size(); i++) {
             missiles.get(i).move();
             if (collisionOccurred(missiles.get(i))) {
+                playSound("explosion.wav");
                 missiles.remove(missiles.get(i));
                 score++;
             }
@@ -174,9 +181,9 @@ public class GameModel implements IGameModel {
         gameInfos.clear();
         String text1 = "Force: " + cannon.getPower() + ", Angle: " + String.format("%.2f", cannon.getAngle()) +
                 ", Gravity: " + MvcGameConfig.GRAVITY + ", Score: " + score;
-        gameInfos.add(gameObjectFactoryA.createGameInfo(text1, "up"));
+        gameInfos.add(gameObjectFactoryA.createGameInfo(text1));
         String text2 = "Shooting mode: " + cannon.getShootingMode().getName() + ", Moving mode: " + movingStrategy.getName();
-        gameInfos.add(gameObjectFactoryA.createGameInfo(text2, "down"));
+        gameInfos.add(gameObjectFactoryB.createGameInfo(text2));
     }
 
     public List<AbsEnemy> getEnemies() { return enemies; }

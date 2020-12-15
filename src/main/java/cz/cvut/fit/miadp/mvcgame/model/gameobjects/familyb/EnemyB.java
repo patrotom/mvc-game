@@ -12,4 +12,9 @@ public class EnemyB extends AbsEnemy {
     public String getIconName() {
         return "images/enemy2.png";
     }
+
+    @Override
+    public boolean isNull() {
+        return false;
+    }
 }

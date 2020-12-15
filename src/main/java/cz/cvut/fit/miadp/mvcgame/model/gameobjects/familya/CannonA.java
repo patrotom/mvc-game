@@ -86,4 +86,9 @@ public class CannonA extends AbsCannon {
     public void setPower(int power) {
         this.power = power;
     }
+
+    @Override
+    public boolean isNull() {
+        return false;
+    }
 }

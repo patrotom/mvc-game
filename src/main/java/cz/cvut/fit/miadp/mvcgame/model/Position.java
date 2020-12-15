@@ -1,8 +1,8 @@
 package cz.cvut.fit.miadp.mvcgame.model;
 
 public class Position {
-    private int dimX = 0;
-	private int dimY = 0;
+    private int dimX;
+	private int dimY;
 
 	public Position(int posX, int posY) {
 		this.dimX = posX;

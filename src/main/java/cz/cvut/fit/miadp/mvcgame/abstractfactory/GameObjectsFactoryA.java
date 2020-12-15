@@ -23,12 +23,8 @@ public class GameObjectsFactoryA implements IGameObjectFactory{
     }
 
     @Override
-    public GameInfoA createGameInfo(String text, String type) {
-        if (type == "up")
-            return new GameInfoA(text, new Position(MvcGameConfig.INFO_POS_X, MvcGameConfig.INFO_POS_Y));
-
-        return new GameInfoA(text, new Position(MvcGameConfig.INFO_POS_X,
-                MvcGameConfig.MAX_Y - MvcGameConfig.INFO_POS_Y));
+    public GameInfoA createGameInfo(String text) {
+        return new GameInfoA(text, new Position(MvcGameConfig.INFO_POS_X, MvcGameConfig.INFO_POS_Y));
     }
 
     @Override
