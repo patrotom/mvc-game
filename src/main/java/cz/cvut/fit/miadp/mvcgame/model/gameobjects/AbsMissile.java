@@ -13,6 +13,8 @@ public abstract class AbsMissile extends LifetimeLimitedGameObject {
         this.initVelocity = initVelocity;
     }
 
+    public abstract void move();
+
     @Override
     public void acceptVisitor(IGameObjectsVisitor render) {
         render.visitMissile(this);
@@ -25,6 +27,4 @@ public abstract class AbsMissile extends LifetimeLimitedGameObject {
     public double getInitAngle() {
         return initAngle;
     }
-
-    public abstract void move();
 }

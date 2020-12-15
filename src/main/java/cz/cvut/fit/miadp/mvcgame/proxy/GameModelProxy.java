@@ -10,7 +10,7 @@ import cz.cvut.fit.miadp.mvcgame.strategy.IMovingStrategy;
 import java.util.List;
 
 public class GameModelProxy implements IGameModel {
-    private IGameModel subject;
+    private final IGameModel subject;
 
     public GameModelProxy(IGameModel subject) {
         this.subject = subject;

@@ -11,10 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CannonA extends AbsCannon {
-    private IGameObjectFactory gameObjectFactory;
+    private final IGameObjectFactory gameObjectFactory;
+    private final List<AbsMissile> shootingBatch;
     private double angle;
     private int power;
-    private List<AbsMissile> shootingBatch;
 
     public CannonA(Position position, IGameObjectFactory gameObjectFactory) {
         this.position = position;
@@ -43,6 +43,7 @@ public class CannonA extends AbsCannon {
         return shootingBatch;
     }
 
+    @Override
     public void primitiveShoot() {
         shootingBatch.add(gameObjectFactory.createMissile(angle, power));
     }

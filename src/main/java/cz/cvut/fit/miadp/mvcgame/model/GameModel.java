@@ -12,26 +12,22 @@ import cz.cvut.fit.miadp.mvcgame.strategy.IMovingStrategy;
 import cz.cvut.fit.miadp.mvcgame.strategy.RealisticMovingStrategy;
 import cz.cvut.fit.miadp.mvcgame.strategy.SimpleMovingStrategy;
 
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-
-import java.io.File;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class GameModel implements IGameModel, MediaMixin {
+    private final AbsCannon cannon;
+    private final List<AbsMissile> missiles;
+    private final List<AbsGameInfo> gameInfos;
+    private final List<AbsEnemy> enemies;
+    private final List<IObserver> observers;
+    private final List<AbsCollision> collisions;
+    private final IGameObjectFactory gameObjectFactoryA;
+    private final IGameObjectFactory gameObjectFactoryB;
+    private final Queue<AbstractGameCommand> unexecutedCommands = new LinkedBlockingQueue<>();
+    private final Stack<AbstractGameCommand> executedCommands = new Stack<>();
     private int score;
-    private AbsCannon cannon;
-    private List<AbsMissile> missiles;
-    private List<AbsGameInfo> gameInfos;
-    private List<AbsEnemy> enemies;
-    private List<IObserver> observers;
-    private List<AbsCollision> collisions;
-    private IGameObjectFactory gameObjectFactoryA;
-    private IGameObjectFactory gameObjectFactoryB;
     private IMovingStrategy movingStrategy;
-    private Queue<AbstractGameCommand> unexecutedCommands = new LinkedBlockingQueue<>();
-    private Stack<AbstractGameCommand> executedCommands = new Stack<>();
 
     public GameModel() {
         movingStrategy = new SimpleMovingStrategy();
@@ -48,6 +44,7 @@ public class GameModel implements IGameModel, MediaMixin {
         spawnEnemies();
     }
 
+    @Override
     public void update() {
         executeCommands();
         moveMissiles();
@@ -56,37 +53,44 @@ public class GameModel implements IGameModel, MediaMixin {
         destroyCollisions();
     }
 
+    @Override
     public void moveCannonUp() {
         cannon.moveUp();
         notifyObservers();
     }
 
+    @Override
     public void moveCannonDown() {
         cannon.moveDown();
         notifyObservers();
     }
 
+    @Override
     public void shootCannon() {
         missiles.addAll(cannon.shoot());
         playSound("shoot.wav");
         notifyObservers();
     }
 
+    @Override
     public void aimCannonUp() {
         cannon.aimUp();
         notifyObservers();
     }
 
+    @Override
     public void aimCannonDown() {
         cannon.aimDown();
         notifyObservers();
     }
 
+    @Override
     public void powerCannonDown() {
         cannon.powerDown();
         notifyObservers();
     }
 
+    @Override
     public void powerCannonUp() {
         cannon.powerUp();
         notifyObservers();
@@ -113,10 +117,12 @@ public class GameModel implements IGameModel, MediaMixin {
         }
     }
 
+    @Override
     public void timeTick() {
         update();
     }
 
+    @Override
     public void toggleMovingStrategy() {
         if (movingStrategy instanceof SimpleMovingStrategy) {
             movingStrategy = new RealisticMovingStrategy();
@@ -126,8 +132,79 @@ public class GameModel implements IGameModel, MediaMixin {
         }
     }
 
+    @Override
     public void toggleShootingMode() {
         cannon.toggleShootingMode();
+    }
+
+    @Override
+    public List<GameObject> getGameObjects() {
+        List<GameObject> gameObjects = new ArrayList<>();
+        gameObjects.addAll(missiles);
+        gameObjects.add(cannon);
+        gameObjects.addAll(gameInfos);
+        gameObjects.addAll(enemies);
+        gameObjects.addAll(collisions);
+
+        return gameObjects;
+    }
+
+    @Override
+    public IMovingStrategy getMovingStrategy() {
+        return movingStrategy;
+    }
+
+    @Override
+    public Object createMemento() {
+        Memento memento = new Memento();
+        memento.score = score;
+        memento.cannonX = getCannonPosition().getX();
+        memento.cannonY = getCannonPosition().getY();
+        memento.angle = cannon.getAngle();
+        memento.power = cannon.getPower();
+        memento.missiles = new ArrayList<>(missiles);
+        memento.gameInfos = new ArrayList<>(gameInfos);
+        memento.enemies = new ArrayList<>(enemies);
+        memento.collisions = new ArrayList<>(collisions);
+
+        return memento;
+    }
+
+    @Override
+    public void setMemento(Object m) {
+        Memento memento = (Memento)m;
+        score = memento.score;
+        cannon.getPosition().setX(memento.cannonX);
+        cannon.getPosition().setY(memento.cannonY);
+        cannon.setAngle(memento.angle);
+        cannon.setPower(memento.power);
+        missiles.clear();
+        missiles.addAll(memento.missiles);
+        gameInfos.clear();
+        gameInfos.addAll(memento.gameInfos);
+        enemies.clear();
+        enemies.addAll(memento.enemies);
+        collisions.clear();
+        collisions.addAll(memento.collisions);
+    }
+
+    @Override
+    public Position getCannonPosition() {
+        return new Position(this.cannon.getPosition().getX(), this.cannon.getPosition().getY());
+    }
+
+    @Override
+    public void registerCommand(AbstractGameCommand command) {
+        unexecutedCommands.add(command);
+    }
+
+    @Override
+    public void undoLastCommand() {
+        if (executedCommands.isEmpty()) return;
+
+        AbstractGameCommand command = executedCommands.pop();
+        command.unExecute();
+        notifyObservers();
     }
 
     private void destroyMissiles() {
@@ -186,74 +263,6 @@ public class GameModel implements IGameModel, MediaMixin {
         gameInfos.add(gameObjectFactoryB.createGameInfo(text2));
     }
 
-    public List<AbsEnemy> getEnemies() { return enemies; }
-
-    public List<AbsMissile> getMissiles() { return missiles; }
-
-    public List<GameObject> getGameObjects() {
-        List<GameObject> gameObjects = new ArrayList<>();
-        gameObjects.addAll(missiles);
-        gameObjects.add(cannon);
-        gameObjects.addAll(gameInfos);
-        gameObjects.addAll(enemies);
-        gameObjects.addAll(collisions);
-
-        return gameObjects;
-    }
-
-    public IMovingStrategy getMovingStrategy() {
-        return movingStrategy;
-    }
-
-    private class Memento {
-        private int score;
-        private int cannonX;
-        private int cannonY;
-        private double angle;
-        private int power;
-        private List<AbsMissile> missiles;
-        private List<AbsGameInfo> gameInfos;
-        private List<AbsEnemy> enemies;
-        private List<AbsCollision> collisions;
-    }
-
-    public Object createMemento() {
-        Memento memento = new Memento();
-        memento.score = score;
-        memento.cannonX = getCannonPosition().getX();
-        memento.cannonY = getCannonPosition().getY();
-        memento.angle = cannon.getAngle();
-        memento.power = cannon.getPower();
-        memento.missiles = new ArrayList<>(missiles);
-        memento.gameInfos = new ArrayList<>(gameInfos);
-        memento.enemies = new ArrayList<>(enemies);
-        memento.collisions = new ArrayList<>(collisions);
-
-        return memento;
-    }
-
-    public void setMemento(Object m) {
-        Memento memento = (Memento)m;
-        score = memento.score;
-        cannon.getPosition().setX(memento.cannonX);
-        cannon.getPosition().setY(memento.cannonY);
-        cannon.setAngle(memento.angle);
-        cannon.setPower(memento.power);
-        missiles.clear();
-        missiles.addAll(memento.missiles);
-        gameInfos.clear();
-        gameInfos.addAll(memento.gameInfos);
-        enemies.clear();
-        enemies.addAll(memento.enemies);
-        collisions.clear();
-        collisions.addAll(memento.collisions);
-    }
-
-    @Override
-    public Position getCannonPosition() {
-        return new Position(this.cannon.getPosition().getX(), this.cannon.getPosition().getY());
-    }
-
     private void spawnEnemies() {
         while (enemies.size() < MvcGameConfig.MAX_ENEMIES) {
             Random rand = new Random();
@@ -272,25 +281,23 @@ public class GameModel implements IGameModel, MediaMixin {
         }
     }
 
-    @Override
-    public void registerCommand(AbstractGameCommand command) {
-        unexecutedCommands.add(command);
-    }
-
-    @Override
-    public void undoLastCommand() {
-        if (executedCommands.isEmpty()) return;
-
-        AbstractGameCommand command = executedCommands.pop();
-        command.unExecute();
-        notifyObservers();
-    }
-
     private void executeCommands() {
         while(!unexecutedCommands.isEmpty()) {
             AbstractGameCommand command = unexecutedCommands.poll();
             command.doExecute();
             executedCommands.push(command);
         }
+    }
+
+    private class Memento {
+        private int score;
+        private int cannonX;
+        private int cannonY;
+        private double angle;
+        private int power;
+        private List<AbsMissile> missiles;
+        private List<AbsGameInfo> gameInfos;
+        private List<AbsEnemy> enemies;
+        private List<AbsCollision> collisions;
     }
 }

@@ -8,10 +8,10 @@ public abstract class AbsEnemy extends GameObject {
         this.position = position;
     }
 
+    public abstract String getIconName();
+
     @Override
     public void acceptVisitor(IGameObjectsVisitor render) {
         render.visitEnemy(this);
     }
-
-    public abstract String getIconName();
 }

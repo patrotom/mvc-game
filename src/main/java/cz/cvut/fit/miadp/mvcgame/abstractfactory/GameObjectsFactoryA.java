@@ -6,7 +6,7 @@ import cz.cvut.fit.miadp.mvcgame.model.Position;
 import cz.cvut.fit.miadp.mvcgame.model.gameobjects.familya.*;
 
 public class GameObjectsFactoryA implements IGameObjectFactory{
-    private IGameModel model;
+    private final IGameModel model;
 
     public GameObjectsFactoryA(IGameModel model) {
         this.model = model;

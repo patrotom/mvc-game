@@ -28,6 +28,7 @@ public class JavaFxGraphics implements IGameGraphicsImplementor {
         gc.strokeLine(beginPosition.getX(), beginPosition.getY(), endPosition.getX(), endPosition.getY());
     }
 
+    @Override
     public void clear() {
         gc.clearRect(0, 0, MvcGameConfig.MAX_X, MvcGameConfig.MAX_Y);
     }

@@ -8,10 +8,10 @@ import cz.cvut.fit.miadp.mvcgame.observer.IObserver;
 import cz.cvut.fit.miadp.mvcgame.visitor.GameObjectsRender;
 
 public class GameView implements IObserver {
-    private GameController controller;
-    private IGameModel model;
+    private final GameController controller;
+    private final IGameModel model;
     private IGameGraphics graphicsContext;
-    private GameObjectsRender render;
+    private final GameObjectsRender render;
     private int updateCnt;
 
     public GameView(IGameModel model) {
@@ -21,6 +21,11 @@ public class GameView implements IObserver {
         updateCnt = 1;
         this.model.registerObserver(this);
         render = new GameObjectsRender();
+    }
+
+    @Override
+    public void update() {
+        updateCnt++;
     }
 
     public void render() {
@@ -38,11 +43,6 @@ public class GameView implements IObserver {
     }
 
     public GameController getController() { return this.controller; }
-
-    @Override
-    public void update() {
-        updateCnt++;
-    }
 
     public void setGraphicsContext(IGameGraphics graphicsContext) {
         this.graphicsContext = graphicsContext;

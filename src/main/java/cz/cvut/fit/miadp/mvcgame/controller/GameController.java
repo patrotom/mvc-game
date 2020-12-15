@@ -6,7 +6,7 @@ import cz.cvut.fit.miadp.mvcgame.model.IGameModel;
 import java.util.List;
 
 public class GameController {
-    private IGameModel model;
+    private final IGameModel model;
 
     public GameController(IGameModel model) {
         this.model = model;
@@ -43,8 +43,7 @@ public class GameController {
                     model.registerCommand(new ToggleShootingModeCommand(model));
                     break;
                 case "B":
-                    model.undoLastCommand(); // TODO: Some weird stuff going on here
-//                    model.registerCommand(new UndoLastCommandCommand(model));
+                    model.undoLastCommand(); // Not working with command pattern
                     break;
                 default:
                     // Nothing
