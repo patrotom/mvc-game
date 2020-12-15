@@ -1,58 +1,47 @@
 package cz.cvut.fit.miadp.mvcgame;
 
+import java.io.File;
 import java.util.List;
+
+import cz.cvut.fit.miadp.mvcgame.bridge.IGameGraphics;
 import cz.cvut.fit.miadp.mvcgame.config.MvcGameConfig;
-import cz.cvut.fit.miadp.mvcgame.model.Position;
-// in future, use Bridge to remove this dependency
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
+import cz.cvut.fit.miadp.mvcgame.controller.GameController;
+import cz.cvut.fit.miadp.mvcgame.memento.CareTaker;
+import cz.cvut.fit.miadp.mvcgame.model.GameModel;
+import cz.cvut.fit.miadp.mvcgame.model.IGameModel;
+import cz.cvut.fit.miadp.mvcgame.proxy.GameModelProxy;
+import cz.cvut.fit.miadp.mvcgame.view.GameView;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
-public class MvcGame
-{
-    private Position logoPos;
+public class MvcGame {
+    private IGameModel model;
+    private GameView view;
+    private GameController controller;
+    private MediaPlayer mediaPlayer;
 
-    public void init()
-    {
-        logoPos = new Position( (int)((MvcGameConfig.MAX_X/2)-128), (int)((MvcGameConfig.MAX_Y/2)-128) );
+    public void init() {
+        model = new GameModelProxy(new GameModel());
+        view = new GameView(model);
+        controller = view.getController();
+        CareTaker.getInstance().setModel(model);
+        initBackgroundMusic();
     }
 
-    public void processPressedKeys(List<String> pressedKeysCodes)
-    {
-        for(String code : pressedKeysCodes)
-        {
-            switch(code){
-                case "UP":
-                    logoPos.setY(logoPos.getY() - 10);
-                    break;
-                case "DOWN":
-                    logoPos.setY(logoPos.getY() + 10);
-                    break;
-                case "LEFT":
-                    logoPos.setX(logoPos.getX() - 10);
-                    break;
-                case "RIGHT":
-                    logoPos.setX(logoPos.getX() + 10);
-                    break;
-                default: 
-                    //nothing
-            }
-        }
+    public void processPressedKeys(List<String> pressedKeysCodes) {
+        this.controller.processPressedKeys(pressedKeysCodes);
     }
 
-    public void update()
-    {
-        // nothing yet
+    public void update() {
+        model.timeTick();
     }
 
-    public void render(GraphicsContext gr)
-    {
-        gr.drawImage(new Image("icons/fit-icon-256x256.png"), logoPos.getX(), logoPos.getY());
+    public void render(IGameGraphics gr) {
+        view.setGraphicsContext(gr);
+        view.render();
     }
 
-    public String getWindowTitle()
-    {
-        return "The MI-ADP.16 MvcGame";
-    }
+    public String getWindowTitle() { return "MVC Game"; }
 
     public int getWindowWidth()
     {
@@ -62,5 +51,12 @@ public class MvcGame
     public int getWindowHeight()
     {
         return  MvcGameConfig.MAX_Y;
+    }
+
+    private void initBackgroundMusic() {
+        Media sound = new Media(new File("src/main/resources/sounds/level.mp3").toURI().toString());
+        mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.seek(mediaPlayer.getStartTime());
+        mediaPlayer.play();
     }
 }
